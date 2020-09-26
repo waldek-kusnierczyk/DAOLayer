@@ -1,10 +1,16 @@
-package pl.coderslab;
+package pl.coderslab.entity;
 
 public class User {
-    private int id;
+    private int id;         // wartość id będzie wynosiła 0, jeśli obiekt nie został jeszcze zapisany w bazie danych
+                            // (baza danych nigdy nie nada takiego klucza głównego)
+                            // !=0 , gdy gdy obiekt ma odpowiadający sobie wiersz w bazie danych
     private String email;
     private String username;
     private String password;
+
+    public User() {
+        id = 0;
+    }
 
     public int getId() {
         return id;
