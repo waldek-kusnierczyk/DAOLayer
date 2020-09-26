@@ -1,6 +1,9 @@
 package pl.coderslab.entity;
 
 import java.sql.*;
+import java.util.Arrays;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserDao {
     private static final String CREATE_USER_QUERY =
@@ -12,17 +15,14 @@ public class UserDao {
     private static final String READ_USER_QUERY =
             "SELECT email, username, password from users WHERE id=?";
 
-
     private static final String DELETE_USER_QUERY =
             "DELETE FROM users WHERE id=?";
-
 
     private static final String READALL_USER_QUERY =
             "SELECT id, email, username, password FROM users";
 
     public String hashPassword(String password) {
-        //return BCrypt.hashpw(password, BCrypt.gensalt());
-        return password;
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     public User create(User user) {
@@ -39,6 +39,9 @@ public class UserDao {
                 user.setId(resultSet.getInt(1));
             }
             return user;
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.out.println(e.getMessage());
+            return null;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -48,13 +51,6 @@ public class UserDao {
 
     // wczytanie użytkownika po jego id,
     public User read(int userId) {
-    /*
-    W ramach metody należy wykonać:
-        pobrać z bazy danych wiersz dla zadanego identyfikatora
-        utworzyć nowy obiekt klasy User
-        uzupełnić obiekt danymi z bazy
-        zwrócić uzupełniony obiekt
-     */
         try (Connection conn = DbUtil.getConnection()) {
             PreparedStatement statement =
                     conn.prepareStatement(READ_USER_QUERY);
@@ -68,7 +64,6 @@ public class UserDao {
                 user.setEmail(resultSet.getString("email"));
                 return user;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -78,11 +73,6 @@ public class UserDao {
 
     // edycja danych użytkownika
     public void update(User user) {
-    /*
-    Metoda przyjmuje obiekt klasy User, który powinien posiadać wypełnione atrybuty, (userName, email, password, id),
-    Metoda nic nie zwraca.
-    W ramach metody należy zmienić dane w bazie na podstawie danych z obiektu.
-     */
         try (Connection conn = DbUtil.getConnection()) {
             PreparedStatement statement =
                     conn.prepareStatement(UPDATE_USER_QUERY);
@@ -98,11 +88,6 @@ public class UserDao {
 
     // usunięcia użytkownika
     public void delete(int userId) {
-    /*
-    Metoda przyjmuje identy kator na podstawie, którego należy w bazie danych pobrać wiersz.
-    Metoda nic nie zwraca.
-    W ramach metody należy usunąć wiersz z bazy danych na podstawie przekazanego identy katora.
-     */
         try (Connection conn = DbUtil.getConnection()) {
             PreparedStatement statement =
                     conn.prepareStatement(DELETE_USER_QUERY);
@@ -115,14 +100,29 @@ public class UserDao {
 
     // wczytanie wszystkich użytkowników
     public User[] findAll() {
-    /*
-    W ramach metody należy wykonać:
-        pobrać z bazy danych wszystkie wiersze z tabeli users
-        na podstawie każdego wiersza utworzyć obiekt klasy User
-        obiekty umieścić w tablicy
-        zwrócić tablicę obiektów
-        Będziemy również potrzebować mechanizmu, który pozwoli nam automatycznie powiększać tablicę.
-     */
-        return null;
+        try (Connection conn = DbUtil.getConnection()) {
+            PreparedStatement statement =
+                    conn.prepareStatement(READALL_USER_QUERY);
+            ResultSet resultSet = statement.executeQuery();
+            User[] users = new User[0];
+            while (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setPassword(resultSet.getString("password"));
+                user.setEmail(resultSet.getString("email"));
+                users = addToArray(user, users);
+            }
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private User[] addToArray(User u, User[] users) {
+        User[] tmpUsers = Arrays.copyOf(users, users.length + 1); // Tworzymy kopię tablicy powiększoną o 1.
+        tmpUsers[users.length] = u; // Dodajemy obiekt na ostatniej pozycji.
+        return tmpUsers; // Zwracamy nową tablicę.
     }
 }

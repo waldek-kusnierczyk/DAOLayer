@@ -2,14 +2,13 @@ package pl.coderslab.entity;
 
 public class User {
     private int id;         // wartość id będzie wynosiła 0, jeśli obiekt nie został jeszcze zapisany w bazie danych
-                            // (baza danych nigdy nie nada takiego klucza głównego)
-                            // !=0 , gdy gdy obiekt ma odpowiadający sobie wiersz w bazie danych
+    // (baza danych nigdy nie nada takiego klucza głównego)
+    // !=0 , gdy gdy obiekt ma odpowiadający sobie wiersz w bazie danych
     private String email;
     private String username;
     private String password;
 
     public User() {
-        id = 0;
     }
 
     public int getId() {
@@ -42,5 +41,15 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+//                ", password='" + password + '\'' +
+                '}';
     }
 }
