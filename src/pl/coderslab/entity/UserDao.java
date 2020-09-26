@@ -94,8 +94,6 @@ public class UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
     }
 
     // usunięcia użytkownika
@@ -105,6 +103,14 @@ public class UserDao {
     Metoda nic nie zwraca.
     W ramach metody należy usunąć wiersz z bazy danych na podstawie przekazanego identy katora.
      */
+        try (Connection conn = DbUtil.getConnection()) {
+            PreparedStatement statement =
+                    conn.prepareStatement(DELETE_USER_QUERY);
+            statement.setInt(1, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // wczytanie wszystkich użytkowników

@@ -10,14 +10,14 @@ public class MainDao {
 //        userDao.create(user);
 
         // pobieranie i edycja użytkownika
-        User userToUpdate = userDao.read(1);
-        userToUpdate.setUsername("Waldemar");
-        userToUpdate.setEmail("waldek.kusn@gmail.com");
-        userToUpdate.setPassword("superPassword");
-        userDao.update(userToUpdate);
+//        User userToUpdate = userDao.read(1);
+//        userToUpdate.setUsername("Waldemar");
+//        userToUpdate.setEmail("waldek.kusn@gmail.com");
+//        userToUpdate.setPassword("superPassword");
+//        userDao.update(userToUpdate);
 
         // usuwanie i lista użytkowników
-//        userDao.delete(1);
+        userDao.delete(1);
 //        User[] all = userDao.findAll();
 //        for (User u : all) {
 //            System.out.println(u);
